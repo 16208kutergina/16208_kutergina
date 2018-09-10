@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_yetisport" default="compile.module.yetisport">
+  <dirname property="module.yetisport.basedir" file="${ant.file.module_yetisport}"/>
+  
+  <property name="module.jdk.home.yetisport" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.yetisport" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.yetisport" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.yetisport" value="-encoding UTF-8 -source 9 -target 9 ${compiler.args}"/>
+  
+  <property name="yetisport.output.dir" value="${module.yetisport.basedir}/out/production/Yetisport"/>
+  <property name="yetisport.testoutput.dir" value="${module.yetisport.basedir}/out/test/Yetisport"/>
+  
+  <path id="yetisport.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="yetisport.module.production.classpath">
+    <path refid="${module.jdk.classpath.yetisport}"/>
+  </path>
+  
+  <path id="yetisport.runtime.production.module.classpath">
+    <pathelement location="${yetisport.output.dir}"/>
+  </path>
+  
+  <path id="yetisport.module.classpath">
+    <path refid="${module.jdk.classpath.yetisport}"/>
+    <pathelement location="${yetisport.output.dir}"/>
+  </path>
+  
+  <path id="yetisport.runtime.module.classpath">
+    <pathelement location="${yetisport.testoutput.dir}"/>
+    <pathelement location="${yetisport.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.yetisport">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.yetisport">
+    <patternset refid="excluded.from.module.yetisport"/>
+  </patternset>
+  
+  <path id="yetisport.module.sourcepath">
+    <dirset dir="${module.yetisport.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.yetisport" depends="compile.module.yetisport.production,compile.module.yetisport.tests" description="Compile module Yetisport"/>
+  
+  <target name="compile.module.yetisport.production" depends="register.custom.compilers" description="Compile module Yetisport; production classes">
+    <mkdir dir="${yetisport.output.dir}"/>
+    <javac2 destdir="${yetisport.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.yetisport}/javac">
+      <compilerarg line="${compiler.args.yetisport}"/>
+      <bootclasspath refid="yetisport.module.bootclasspath"/>
+      <classpath refid="yetisport.module.production.classpath"/>
+      <src refid="yetisport.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.yetisport"/>
+    </javac2>
+    
+    <copy todir="${yetisport.output.dir}">
+      <fileset dir="${module.yetisport.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.yetisport.tests" depends="register.custom.compilers,compile.module.yetisport.production" description="compile module Yetisport; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.yetisport" description="cleanup module">
+    <delete dir="${yetisport.output.dir}"/>
+    <delete dir="${yetisport.testoutput.dir}"/>
+  </target>
+</project>

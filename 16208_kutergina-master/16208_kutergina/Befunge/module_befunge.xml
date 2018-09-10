@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_befunge" default="compile.module.befunge">
+  <dirname property="module.befunge.basedir" file="${ant.file.module_befunge}"/>
+  
+  <property name="module.jdk.home.befunge" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.befunge" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.befunge" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.befunge" value="-encoding UTF-8 -source 9 -target 9 ${compiler.args}"/>
+  
+  <property name="befunge.output.dir" value="${module.befunge.basedir}/out/production/Befunge"/>
+  <property name="befunge.testoutput.dir" value="${module.befunge.basedir}/out/test/Befunge"/>
+  
+  <path id="befunge.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="befunge.module.production.classpath">
+    <path refid="${module.jdk.classpath.befunge}"/>
+    <pathelement location="${path.variable.maven_repository}/org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/junit/jupiter/junit-jupiter-api/5.0.0/junit-jupiter-api-5.0.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/junit/platform/junit-platform-commons/1.0.0/junit-platform-commons-1.0.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/opentest4j/opentest4j/1.0.0/opentest4j-1.0.0.jar"/>
+  </path>
+  
+  <path id="befunge.runtime.production.module.classpath">
+    <pathelement location="${befunge.output.dir}"/>
+    <pathelement location="${path.variable.maven_repository}/org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/junit/jupiter/junit-jupiter-api/5.0.0/junit-jupiter-api-5.0.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/junit/platform/junit-platform-commons/1.0.0/junit-platform-commons-1.0.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/opentest4j/opentest4j/1.0.0/opentest4j-1.0.0.jar"/>
+  </path>
+  
+  <path id="befunge.module.classpath">
+    <path refid="${module.jdk.classpath.befunge}"/>
+    <pathelement location="${befunge.output.dir}"/>
+    <pathelement location="${path.variable.maven_repository}/org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/junit/jupiter/junit-jupiter-api/5.0.0/junit-jupiter-api-5.0.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/junit/platform/junit-platform-commons/1.0.0/junit-platform-commons-1.0.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/opentest4j/opentest4j/1.0.0/opentest4j-1.0.0.jar"/>
+  </path>
+  
+  <path id="befunge.runtime.module.classpath">
+    <pathelement location="${befunge.testoutput.dir}"/>
+    <pathelement location="${befunge.output.dir}"/>
+    <pathelement location="${path.variable.maven_repository}/org/apiguardian/apiguardian-api/1.0.0/apiguardian-api-1.0.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/junit/jupiter/junit-jupiter-api/5.0.0/junit-jupiter-api-5.0.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/junit/platform/junit-platform-commons/1.0.0/junit-platform-commons-1.0.0.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/opentest4j/opentest4j/1.0.0/opentest4j-1.0.0.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.befunge">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.befunge">
+    <patternset refid="excluded.from.module.befunge"/>
+  </patternset>
+  
+  <path id="befunge.module.sourcepath">
+    <dirset dir="${module.befunge.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.befunge" depends="compile.module.befunge.production,compile.module.befunge.tests" description="Compile module Befunge"/>
+  
+  <target name="compile.module.befunge.production" depends="register.custom.compilers" description="Compile module Befunge; production classes">
+    <mkdir dir="${befunge.output.dir}"/>
+    <javac2 destdir="${befunge.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.befunge}/javac">
+      <compilerarg line="${compiler.args.befunge}"/>
+      <bootclasspath refid="befunge.module.bootclasspath"/>
+      <classpath refid="befunge.module.production.classpath"/>
+      <src refid="befunge.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.befunge"/>
+    </javac2>
+    
+    <copy todir="${befunge.output.dir}">
+      <fileset dir="${module.befunge.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.befunge.tests" depends="register.custom.compilers,compile.module.befunge.production" description="compile module Befunge; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.befunge" description="cleanup module">
+    <delete dir="${befunge.output.dir}"/>
+    <delete dir="${befunge.testoutput.dir}"/>
+  </target>
+</project>
